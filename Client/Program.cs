@@ -3,5 +3,10 @@ using Grpc.Net.Client;
 
 Console.WriteLine("Hello, World!");
 
+var option = new GrpcChannelOptions()
+{
+
+};
+
 // creating gRPC channel
-using var channel = GrpcChannel.ForAddress("https://localhost:7226");
+using var channel = GrpcChannel.ForAddress("https://localhost:7226", option);
