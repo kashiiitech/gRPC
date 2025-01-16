@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Basics;
+using Grpc.Core;
 using Grpc.Net.Client;
 
 Console.WriteLine("Hello, World!");
@@ -14,7 +15,8 @@ using var channel = GrpcChannel.ForAddress("https://localhost:7226", option);
 // creating a client
 var client = new FirstServiceDefinition.FirstServiceDefinitionClient(channel);
 //Unary(client);
-ClientStreaming(client);
+//ClientStreaming(client);
+ServerStreaming(client);
 
 Console.ReadLine();
 void Unary(FirstServiceDefinition.FirstServiceDefinitionClient client)
@@ -34,4 +36,14 @@ async void ClientStreaming(FirstServiceDefinition.FirstServiceDefinitionClient c
     await call.RequestStream.CompleteAsync();
     Response response = await call;
     Console.WriteLine($"{response.Message}");
+}
+
+async void ServerStreaming(FirstServiceDefinition.FirstServiceDefinitionClient client)
+{
+    using var streamingCall = client.ServerStream(new Request() { Content = "Hello!"} );
+
+    await foreach(var response in streamingCall.ResponseStream.ReadAllAsync())
+    {
+        Console.WriteLine(response.Message);
+    }
 }
