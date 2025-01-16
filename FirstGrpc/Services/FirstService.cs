@@ -24,5 +24,14 @@ namespace FirstGrpc.Services
             }
             return response;
         }
+
+        public override async Task ServerStream(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                var response = new Response() { Message = i.ToString() };
+                await responseStream.WriteAsync(response);
+            }
+        }
     }
 }
