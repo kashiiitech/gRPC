@@ -13,3 +13,11 @@ var option = new GrpcChannelOptions()
 using var channel = GrpcChannel.ForAddress("https://localhost:7226", option);
 // creating a client
 var client = new FirstServiceDefinition.FirstServiceDefinitionClient(channel);
+Unary(client);
+
+Console.ReadLine();
+void Unary(FirstServiceDefinition.FirstServiceDefinitionClient client)
+{
+    var request = new Request() { Content = "Hello you!" };
+    var response = client.Unary(request);
+}
