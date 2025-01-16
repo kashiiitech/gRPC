@@ -10,5 +10,19 @@ namespace FirstGrpc.Services
             var response = new Response() { Message = request.Content + " from server" };
             return Task.FromResult(response);
         }
+
+        public override async Task<Response> ClientStream(IAsyncStreamReader<Request> requestStream, ServerCallContext context)
+        {
+            var response = new Response() { Message = "I got" } ;
+
+            // read the stream from requestStream till it is available
+            while(await requestStream.MoveNext())
+            {
+                var requestPayload = requestStream.Current;
+                Console.WriteLine(requestPayload);
+                response.Message = requestPayload.ToString();
+            }
+            return response;
+        }
     }
 }
