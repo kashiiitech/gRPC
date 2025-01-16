@@ -14,9 +14,9 @@ var option = new GrpcChannelOptions()
 using var channel = GrpcChannel.ForAddress("https://localhost:7226", option);
 // creating a client
 var client = new FirstServiceDefinition.FirstServiceDefinitionClient(channel);
-Unary(client);
+//Unary(client);
 //ClientStreaming(client);
-//ServerStreaming(client);
+ServerStreaming(client);
 //BiDirectionalStreaming(client);
 
 Console.ReadLine();
@@ -41,11 +41,24 @@ async void ClientStreaming(FirstServiceDefinition.FirstServiceDefinitionClient c
 
 async void ServerStreaming(FirstServiceDefinition.FirstServiceDefinitionClient client)
 {
-    using var streamingCall = client.ServerStream(new Request() { Content = "Hello!"} );
-
-    await foreach(var response in streamingCall.ResponseStream.ReadAllAsync())
+    try
     {
-        Console.WriteLine(response.Message);
+        var cancellationToken = new CancellationTokenSource();
+        using var streamingCall = client.ServerStream(new Request() { Content = "Hello!" });
+
+        await foreach (var response in streamingCall.ResponseStream.ReadAllAsync(cancellationToken.Token))
+        {
+            Console.WriteLine(response.Message);
+            if(response.Message.Contains("2"))
+            {
+                cancellationToken.Cancel();
+            }
+        }
+    }
+
+    catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
+    {
+
     }
 }
 
