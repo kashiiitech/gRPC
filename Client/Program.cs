@@ -14,16 +14,16 @@ var option = new GrpcChannelOptions()
 using var channel = GrpcChannel.ForAddress("https://localhost:7226", option);
 // creating a client
 var client = new FirstServiceDefinition.FirstServiceDefinitionClient(channel);
-//Unary(client);
+Unary(client);
 //ClientStreaming(client);
 //ServerStreaming(client);
-BiDirectionalStreaming(client);
+//BiDirectionalStreaming(client);
 
 Console.ReadLine();
 void Unary(FirstServiceDefinition.FirstServiceDefinitionClient client)
 {
     var request = new Request() { Content = "Hello you!" };
-    var response = client.Unary(request);
+    var response = client.Unary(request, deadline: DateTime.UtcNow.AddMilliseconds(3));
 }
 
 async void ClientStreaming(FirstServiceDefinition.FirstServiceDefinitionClient client)
