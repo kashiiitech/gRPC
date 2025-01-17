@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Basics;
 using Microsoft.AspNetCore.Mvc;
 using MVCClient.Models;
 
@@ -7,14 +8,17 @@ namespace MVCClient.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly FirstServiceDefinition.FirstServiceDefinitionClient client;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, FirstServiceDefinition.FirstServiceDefinitionClient client)
         {
             _logger = logger;
+            this.client = client;
         }
 
         public IActionResult Index()
         {
+            var firstCall = client.Unary(new Request() { Content = "Hello From MVC!" });
             return View();
         }
 

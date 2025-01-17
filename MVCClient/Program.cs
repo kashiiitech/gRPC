@@ -4,6 +4,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddGrpcClient<FirstServiceDefinition.FirstServiceDefinitionClient>(
+    options =>
+    {
+        options.Address = new Uri("https://localhost:7226");
+    });
 
 var app = builder.Build();
 
