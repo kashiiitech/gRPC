@@ -2,6 +2,7 @@
 using Basics;
 using Grpc.Core;
 using Grpc.Net.Client;
+using static Grpc.Core.Metadata;
 
 Console.WriteLine("Hello, World!");
 
@@ -44,7 +45,15 @@ async void ServerStreaming(FirstServiceDefinition.FirstServiceDefinitionClient c
     try
     {
         var cancellationToken = new CancellationTokenSource();
-        using var streamingCall = client.ServerStream(new Request() { Content = "Hello!" });
+
+        var metadata = new Metadata();
+        metadata.Add(new Entry("my-first-key", "my-first-value"));
+        metadata.Add(new Entry("my-second-key", "my-second-value"));
+
+        using var streamingCall = client.ServerStream(
+            new Request() { Content = "Hello!" },
+            headers:metadata
+            );
 
         await foreach (var response in streamingCall.ResponseStream.ReadAllAsync(cancellationToken.Token))
         {
