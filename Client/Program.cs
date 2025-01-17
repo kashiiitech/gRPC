@@ -60,9 +60,12 @@ async void ServerStreaming(FirstServiceDefinition.FirstServiceDefinitionClient c
             Console.WriteLine(response.Message);
             if(response.Message.Contains("2"))
             {
-                cancellationToken.Cancel();
+                //cancellationToken.Cancel();
             }
         }
+
+        var myTrailer = streamingCall.GetTrailers();
+        var myValue = myTrailer.GetValue("a-trailer");
     }
 
     catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
